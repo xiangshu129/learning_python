@@ -31,3 +31,33 @@ Features
 - Portable
 - Powerful
 - Easy to learn and to use
+
+Interpreter
+-----------
+
+- `CPython <http://www.python.org>`_
+- `IPython <https://ipython.org/>`_
+- `PyPy <http://pypy.org/>`_
+- `JPython <http://www.jython.org/>`_
+- `IronPython <http://ironpython.net/>`_
+
+tips
+----
+
+- Python Shell auto completion
+
+生成文件`.pythonrc`::
+
+    # ~/.pythonrc
+    # enable syntax completion
+    try:
+        import readline
+    except ImportError:
+        print("Module readline not available.")
+    else:
+        import rlcompleter
+        readline.parse_and_bind("tab: complete")
+
+然后加入bash(~/.bashrc)或zsh(~/.zshrc)的rc脚本::
+
+    export PYTHONSTARTUP=~/.pythonrc
