@@ -591,7 +591,7 @@ L.index(X)                        Methods: searching
 L.count(X)
 L.sort()                          Methods: sorting, reversing,
 L.reverse()
-L.copy()                          copying (3.3+), clearing (3.3+)
+L.copy(), L[:]                    copying (3.3+), clearing (3.3+)
 L.clear()
 L.pop(i)                          Methods, statements: shrinking
 L.remove(X)

@@ -503,6 +503,24 @@ A generator is also an iterator
   >>> type(i)
   <type 'generator'>
 
+Use class **collections::Iterable** to check whether an object is an iterable::
+
+    >>> from collections import Iterable
+    >>> a
+    [1, 3]
+    >>> isinstance(a, Iterable)
+    True
+
+Use **enumerate(xx)** to get index and item from iterable object::
+
+    >>> a
+    {'second': 2, 'third': 3, 'first': 1}
+    >>> for i, (key, value) in enumerate(a.iteritems()): print i, '(', key, '=', value, ')'
+    ...
+    0 ( second = 2 )
+    1 ( third = 3 )
+    2 ( first = 1 )
+
 Comprehensions
 --------------
 
@@ -520,6 +538,11 @@ List comprehensions::
 
   >>> [x + 10 for x in l]
   [11, 12, 13, 14, 15]
+
+  >>> a
+  {'second': 2, 'third': 3, 'first': 1}
+  >>> [ k + '=' + str(v) for k, v in a.iteritems()]
+  ['second=2', 'third=3', 'first=1']
 
 Notes: list comprehensions might run much faster than manual for loop statements (often roughly twice as fast) because their iterations are performed at C language speed inside the interpreter, rather than with manual Python code. Especially for larger data sets, there is often a major performance advantage to using this expression.
 
