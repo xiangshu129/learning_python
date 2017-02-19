@@ -36,7 +36,6 @@ Interpreter
 -----------
 
 - `CPython <http://www.python.org>`_
-- `IPython <https://ipython.org/>`_
 - `PyPy <http://pypy.org/>`_
 - `JPython <http://www.jython.org/>`_
 - `IronPython <http://ironpython.net/>`_
@@ -86,3 +85,36 @@ example::
     virtualenv myenv
     source venv/bin/activate
     deactivate
+
+- Debug
+
+启动Python解释器时可以用-O参数来关闭assert。关闭后，你可以把所有的assert语句当成pass来看。
+
+::
+
+    $ python err.py
+    Traceback (most recent call last):
+      ...
+    AssertionError: n is zero!
+
+    $ python -O err.py
+    Traceback (most recent call last):
+      ...
+    ZeroDivisionError: integer division or modulo by zero
+
+pdb::
+
+    # err.py
+    import pdb
+
+    s = '0'
+    n = int(s)
+    pdb.set_trace() # 运行到这里会自动暂停
+    print 10 / n
+
+- `IPython <http://ipython.org/>`_
+
+Installation::
+
+    pip install ipython
+

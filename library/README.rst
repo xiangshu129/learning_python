@@ -58,6 +58,26 @@ The subprocess module allows you to spawn new processes, connect to their input/
     '~'
     >>> os.path.basename(a)
     '.myopenid'
+    >>> os.path.isfile('log.txt')
+    True
+    >>> os.path.isdir('log.txt')
+    False
+    >>> os.path.pathsep
+    ':'
+    >>> os.path.sep
+    '/'
+    >>> os.path.abspath('log.txt')
+    '/Users/derek/derek/git_repo/devops/caesar/log.txt'
+    >>> os.path.abspath('log.txt').split()
+    ['/Users/derek/derek/git_repo/devops/caesar/log.txt']
+    >>> os.path.exists('log.txt')
+    True
+    >>> os.path.getsize('log.txt')
+    128
+    >>> os.sep
+    '/'
+    >>> os.path.abspath('log.txt').split(os.sep)
+    ['', 'Users', 'derek', 'derek', 'git_repo', 'devops', 'caesar', 'log.txt']
 
 `os.environ <https://docs.python.org/2/library/os.html>`_
 
@@ -75,6 +95,54 @@ os.getpid
 
 os.uname
 
-Python other library
---------------------
+`time <https://docs.python.org/2/library/time.html>`_
 
+::
+
+    >>> time.sleep(2)
+    >>> time.time()
+    1487056436.678085
+    >>> time.sleep(1)
+
+Python 3rd party library
+-------------------------
+
+`selenium <http://selenium-python.readthedocs.io/getting-started.html>`_
+
+example::
+
+    from selenium import webdriver
+    from selenium.webdriver.common.keys import Keys
+
+    driver = webdriver.Firefox()
+    driver.get("http://www.python.org")
+    assert "Python" in driver.title
+    elem = driver.find_element_by_name("q")
+    elem.clear()
+    elem.send_keys("pycon")
+    elem.send_keys(Keys.RETURN)
+    assert "No results found." not in driver.page_source
+    driver.close()
+
+    # another way to check
+    assert "No results found." not in driver.page_source
+
+    # import capability which is a dict
+    from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+    desired_capabilities=DesiredCapabilities.HTMLUNITWITHJS)
+
+    # drag and drop
+    element = driver.find_element_by_name("source")
+    target = driver.find_element_by_name("target")
+
+    # alerts
+    alert = driver.switch_to_alert()
+
+    # window and frame
+    driver.switch_to_window("windowName")
+    driver.switch_to_frame("frameName")
+    driver.switch_to_default_content()
+
+    from selenium.webdriver import ActionChains
+    action_chains = ActionChains(driver)
+    action_chains.drag_and_drop(element, target).perform()

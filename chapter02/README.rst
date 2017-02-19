@@ -1,22 +1,24 @@
 Core Types
 ==========
 
-===============  ==============================================
-Built-in type    Example
-===============  ==============================================
-None             None
-Booleans         True,False
-Numbers          123,3.14,3+4j,0xef,Decimal,Fraction
-Strings          ‘spam’,”Bob’s”,b’ax01c’,u’spxc4m’
-Lists            [1,[2,’Three’],4.5], list(range(10))
-Tuples           (1,’spam’,4,’U’),tuple(‘spam’),namedtuple
-Dicts            {‘food’:’spam’,’taste’:’yum’},dict(hours=10)
-Sets             {1,’a’,’bc’},set(‘abc’)
-Files            open(‘eggs.txt’)
-functions        def,lambda
-modules          import,`__module__`
-classes          object,types,metaclasses
-===============  ==============================================
+::
+
+  ===============  ==============================================
+  Built-in type    Example
+  ===============  ==============================================
+  None             None
+  Booleans         True,False
+  Numbers          123,3.14,3+4j,0xef,Decimal,Fraction
+  Strings          'spam', "Bob's", b'a\x01c', u'sp\xc4m'
+  Lists            [1,[2,’Three’],4.5], list(range(10))
+  Tuples           (1,’spam’,4,’U’),tuple(‘spam’),namedtuple
+  Dicts            {‘food’:’spam’,’taste’:’yum’},dict(hours=10)
+  Sets             {1,’a’,’bc’},set(‘abc’)
+  Files            open(‘eggs.txt’)
+  functions        def,lambda
+  modules          import,`__module__`
+  classes          object,types,metaclasses
+  ===============  ==============================================
 
 None
 ----
@@ -188,15 +190,15 @@ Built-in modules
 Strings
 -------
 
-Literals
+Literals::
 
-- Single quotes: 'spa"m'
-- Double quotes: "spa'm"
-- Triple quotes: '''... spam ...''', """... spam ...""""
-- Escape sequences: "s\tp\na\0m"
-- Raw strings: r"C:\new\test.spm"
-- Bytes literals in 3.x and 2.6+: b'sp\x01am'
-- Unicode literals in 2.x and 3.3+: u'eggs\u0020spam'
+  - Single quotes: 'spa"m'
+  - Double quotes: "spa'm"
+  - Triple quotes: '''... spam ...''', """... spam ...""""
+  - Escape sequences: "s\tp\na\0m"
+  - Raw strings: r"C:\new\test.spm"
+  - Bytes literals in 3.x and 2.6+: b'sp\x01am'
+  - Unicode literals in 2.x and 3.3+: u'eggs\u0020spam'
 
 Single- and double-quoted strings are the same
 
@@ -516,9 +518,11 @@ In 2.x::
   u'hello world'
 
 - *str* is 8-bit, it represents ascii string and binary data.
-- *unicode* represents text.
+- unicode for representing decoded Unicode text
 - unicode.encode => str
 - str.decode => unicode
+- Encoding is the process of translating a **string of characters** into its **raw bytes** form, according to a desired encoding name.
+- Decoding is the process of translating **a raw string of bytes** into its **character string** form, according to its encoding name.
 - Keep text in unicode inside your system. Encode and decode at the bournday(incoming/outgoing) of your system.
 - open().read() returns *str*
 
@@ -551,13 +555,22 @@ In 3.x::
 
 - All text are unicode. The type used to hold text is *str*.
 - Encoded unicode is represented as binary data. The type used to hold binary data is *bytes*.
+- bytearray, a mutable flavor of the bytes type
 - Mixing text and binary data raises TypeError.
 - *basestring* was removed. *str* and *bytes* don't share a base class.
 - open().read() returns *str*; open(, 'b').read() returns *bytes*.
 - sys.stdin, sys.stdout and sys.stderr are unicode-only text files.
 - Filenames are passed to and returned from APIs as (Unicode) strings.
 
+Text-mode files also handle the **byte order marker (BOM)** sequence that may appear at the start of files under some encoding schemes. In the UTF-16 and UTF-32 encodings, for example, the BOM specifies big- or little-endian format (essentially, which end of a bit-string is most significant).
+
 See `Unicode HOWTO <https://docs.python.org/3/howto/unicode.html#unicode-howto>`_
+
+bytes::
+
+  The 3.X bytes object is actually a sequence of short integers, though it prints its content as characters whenever possible
+
+  in Python 2.6 and 2.7 the b'xxx' bytes literal is present for forward compatibility with 3.X, but is the same as 'xxx' and makes a str (the b is ignored), and bytes is just a synonym for str.
 
 List
 ----
