@@ -21,12 +21,34 @@ Executes at runtime::
   ...
   func()    # Call the func defined
 
+In fact, besides calls, functions allow arbitrary attributes to be attached to record information for later use::
+
+    >>> def func1():
+    ...     print "hello world"
+    ...
+    >>> func1()
+    hello world
+    >>> func1.val1 = 'value'
+    >>> func1.val1
+    'value'
+    >>> type(func1)
+    <type 'function'>
+    >>> dir(func1)
+    ['__call__', '__class__', '__closure__', '__code__', '__defaults__', '__delattr__', '__dict__', '__doc__', '__format__', '__get__', '__getattribute__', '__globals__', '__hash__', '__init__', '__module__', '__name__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 'func_closure', 'func_code', 'func_defaults', 'func_dict', 'func_doc', 'func_globals', 'func_name', 'val1']
+    >>> x = func1
+    >>> x.func_name
+    x.func_name
+    >>> x.func_name
+    'func1'
+
 Scopes
 ------
 
 - If a variable is assigned inside a def, it is *local* to that function.
 - If a variable is assigned in an enclosing def, it is *nonlocal* to nested functions.
 - If a variable is assigned outside all defs, it is *global* to the entire file.
+
+names are always looked up in scopes— places where variables are stored—and assignments bind names to scopes
 
 ::
 

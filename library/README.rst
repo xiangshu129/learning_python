@@ -104,6 +104,16 @@ os.uname
     1487056436.678085
     >>> time.sleep(1)
 
+`timedelta <https://docs.python.org/2/library/datetime.html>`_
+
+::
+
+    >>> from datetime import timedelta
+    >>> timedelta(minutes=100)
+    datetime.timedelta(0, 6000)
+    >>> str(timedelta(minutes=100))
+    '1:40:00'
+
 Python 3rd party library
 -------------------------
 

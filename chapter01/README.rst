@@ -63,15 +63,70 @@ tips
 
 - `pip <https://pip.pypa.io/en/stable/>`_
 
-===================================  ============================================
+===================================  ==================================================
 command                              purppose
-===================================  ============================================
+===================================  ==================================================
 pip install SomePackage              install package
 pip list -o                          list outdated packages
-pip show --files SomePackage         show installed files for specified package
 pip install --upgrade SomePackage    upgrade a package
+pip show --files SomePackage         show installed files for specified package
 pip uninstall SomePackage            uninstall a package
-===================================  ============================================
+pip freeze > requirements.txt        Output installed packages in requirements format
+===================================  ==================================================
+
+- `setuptools <https://setuptools.readthedocs.io/en/latest/>`_
+
+Setuptools is a fully-featured, actively-maintained, and stable library designed to facilitate packaging Python projects, where packaging includes::
+
+    * Python package and module definitions
+    * Distribution package metadata
+    * Test hooks
+    * Project installation
+    * Platform-specific details
+    * Python 3 support
+
+Setuptools is a collection of enhancements to the Python distutils (for Python 2.6 and up) that allow developers to more easily build and distribute Python packages, especially ones that have dependencies on other packages.
+
+syntax reference for `setup.py <https://packaging.python.org/distributing/>`_
+
+example::
+
+    # requirements.txt, whose contents populated by command 'pip freeeze > requirements.txt'
+    commentjson==0.6
+    selenium==3.0.2
+
+    # file setup.py:
+    import os
+    import glob
+    from setuptools import setup
+
+    requirements = open(
+        os.path.join(os.path.dirname(__file__),
+                     'requirements.txt')).readlines()
+
+    setup(
+        name='caesar',
+        version='0.1',
+        description='Automatic UI testing framework',
+        packages=['caesar'],
+        scripts=glob.glob('scripts/*.py'),
+        install_requires=requirements,
+    )
+
+command example::
+
+    # get help
+    python setup.py --help-commands
+    # install
+    # -e here means using **developer mode** which will link the developing packages directly instead of install it
+    pip install -e .
+    # or
+    python setup.py -e
+    # build
+    python setup.py build
+    python setup.py clean
+    python setup.py sdist
+    python setup.py bdist
 
 - `virtualenv <https://virtualenv.pypa.io/en/stable/>`_
 
@@ -83,7 +138,7 @@ install:
 example::
 
     virtualenv myenv
-    source venv/bin/activate
+    source myenv/bin/activate
     deactivate
 
 - Debug
