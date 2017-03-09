@@ -37,14 +37,12 @@ In fact, besides calls, functions allow arbitrary attributes to be attached to r
     ['__call__', '__class__', '__closure__', '__code__', '__defaults__', '__delattr__', '__dict__', '__doc__', '__format__', '__get__', '__getattribute__', '__globals__', '__hash__', '__init__', '__module__', '__name__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 'func_closure', 'func_code', 'func_defaults', 'func_dict', 'func_doc', 'func_globals', 'func_name', 'val1']
     >>> x = func1
     >>> x.func_name
-    x.func_name
-    >>> x.func_name
     'func1'
 
 Scopes
 ------
 
-- If a variable is assigned inside a def, it is *local* to that function.
+- If a variable is **assigned** inside a def, it is *local* to that function.
 - If a variable is assigned in an enclosing def, it is *nonlocal* to nested functions.
 - If a variable is assigned outside all defs, it is *global* to the entire file.
 
@@ -60,11 +58,25 @@ names are always looked up in scopes— places where variables are stored—and 
     def inner():
       print(x)    # Nonlocal(inner)
 
+scope details:
+
+* The enclosing module is a global scope and each module is a global scope.
+* The global scope spans a single file only
+* Each call to a function creates a new local scope
+* Assigned names are local unless declared global or nonlocal.
+* All other names are enclosing function locals, globals, or built-ins.
+
+Also note that any type of assignment within a function classifies a name as local.
+
 Name Resolution: The LEGB Rule
 
 - Name assignments create or change local names by default.
 - Name references search at most four scopes: local(L), then enclosing(E) functions (if any), then global(G), then built-in(B).
-- Names declared in global and nonlocal statements map assigned names to enclosing module and function scopes, respectively.
+- Names declared in **global and nonlocal statements** map assigned names to **enclosing module and function** scopes, respectively.
+
+.. image:: LEGB.png
+
+Also keep in mind that these rules apply only to simple variable names (e.g., spam). In Parts V and VI, we’ll see that **qualified** attribute names (e.g., object.spam) live in particular objects and follow a completely different set of lookup rules than those covered here.
 
 The built-in scope::
 
@@ -75,6 +87,14 @@ The built-in scope::
   <class 'zip'>
   >>> zip is builtins.zip
   True
+
+nonlocal and global
+-------------------
+
+Unlike global, though, nonlocal applies to a name in an enclosing function’s scope, not the global module scope outside all defs. Also unlike global, nonlocal names must already exist in the enclosing function’s scope when declared—they can exist only in enclosing functions and cannot be created by a first assignment in a nested def.
+
+* global makes scope lookup begin in the enclosing module’s scope and allows names there to be assigned. Scope lookup continues on to the built-in scope if the name does not exist in the module, but assignments to global names always create or change them in the module’s scope.
+* nonlocal restricts scope lookup to just enclosing defs, requires that the names already exist there, and allows them to be assigned. Scope lookup does not continue on to the global or built-in scopes.
 
 Use *global* and *nonlocal* for changes::
 
