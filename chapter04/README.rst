@@ -1,6 +1,11 @@
 Functions
 =========
 
+1. basics
+2. scope
+3. argument
+4. advanced topics
+
 def
 ---
 
@@ -58,7 +63,7 @@ names are always looked up in scopes— places where variables are stored—and 
     def inner():
       print(x)    # Nonlocal(inner)
 
-scope details:
+**scope details:**
 
 * The enclosing module is a global scope and each module is a global scope.
 * The global scope spans a single file only
@@ -68,7 +73,7 @@ scope details:
 
 Also note that any type of assignment within a function classifies a name as local.
 
-Name Resolution: The LEGB Rule
+**Name Resolution: The LEGB Rule**
 
 - Name assignments create or change local names by default.
 - Name references search at most four scopes: local(L), then enclosing(E) functions (if any), then global(G), then built-in(B).
@@ -135,7 +140,50 @@ See `PEP 3104 <http://www.python.org/dev/peps/pep-3104>`_: nonlocal statement. U
 Arguments
 ---------
 
-Argument Matching Basics
+**Arguments-Passing Basics**
+
+- Arguments are passed by automatically assigning objects to local variable names.
+- Assigning to argument names inside a function does not affect the caller
+- Changing a mutable object argument in a function may impact the caller.
+
+::
+
+  >>> def changer(a, b):          # Arguments assigned references to objects
+  ...   a = 2                     # Changes local name's value only
+  ...   b[0] = 'spam'             # Changes shared object in-place
+  ...
+  >>> X = 1
+  >>> L = [1, 2]                  # Caller
+  >>> changer(X, L)               # Pass immutable and mutable objects
+  >>> X, L                        # X is unchanged, L is different!
+  (1, ['spam', 2])
+
+Python’s class model depends upon changing a passed-in “self” argument in-place, to update object state.
+
+If we don’t want in-place changes within functions to impact objects we pass to them:
+
+1. copy the list at the point of call
+
+::
+
+  L = [1, 2]
+  changer(X, L[:]) # Pass a copy, so our 'L' does not change
+
+2. copy within the function itself
+
+::
+
+  def changer(a, b):
+    b = b[:] # Copy input list so we don't impact caller
+
+Both of these copying schemes don’t stop the function from changing the object—they just prevent those changes from impacting the caller. To really prevent changes, we can always convert to immutable objects to force the issue. Tuples, for example, throw an exception when changes are attempted
+
+::
+
+  L = [1, 2]
+  changer(X, tuple(L)) # Pass a tuple, so changes are errors
+
+**Argument Matching Basics**
 
 - Positionals: matched from left to right
 - Keywords: matched by argument name
@@ -158,6 +206,11 @@ def func(\*\*name)          Matches and collects remaining keyword arguments in 
 def func(\*other, name)     Arguments that must be passed by keyword only in calls (3.X)
 def func(\*, name=value)    Arguments that must be passed by keyword only in calls (3.X)
 ==========================  ================================================================================
+
+If you choose to use and combine the special argument-matching modes, Python will ask you to follow these ordering rules:
+
+- In a function call, arguments must appear in this order: any positional arguments (value); followed by a combination of any keyword arguments (name=value) and the *iterable form; followed by the **dict form.
+- In a function header, arguments must appear in this order: any normal arguments (name); followed by any default arguments (name=value); followed by the *name (or * in 3.X) form; followed by any name or name=value keyword-only arguments (in 3.X); followed by the **name form.
 
 ::
 
@@ -202,15 +255,33 @@ Quiz: Write a function max accepts any number of arguments and returns the biges
   1 (2,) 3 {'d':4, 'e': 5}
 
 Keyword-only arguments must be specified after a single star, not two.
-  Named arguments cannot appear after the \*\*args arbitrary keywords form,
-  and a \*\* can’t appear by itself in the arguments list.
+  - We can also use a * character by itself in the arguments list to indicate that a function does not accept a variable-length argument list but still expects all arguments following the * to be passed as keywords.
 
-::
+  ::
 
-  >>> def kwonly(a, **pargs, b, c):
-  SyntaxError: invalid syntax
-  >>> def kwonly(a, **, b, c):
-  SyntaxError: invalid syntax
+    Python 3.6.0 (default, Mar  4 2017, 12:32:34)
+    [GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)] on darwin
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> def kwonly(a, b, *, c, d):
+    ...     print(a, b, c, d)
+    ...
+    >>> kwonly(1, 2, 3, 4)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: kwonly() takes 2 positional arguments but 4 were given
+    >>> kwonly(1, 2, d = 4, c = 3)
+    1 2 3 4
+    >>> kwonly(b = 1, a = 2, d = 4, c = 3)
+    2 1 3 4
+
+  - Named arguments cannot appear after the \*\*args arbitrary keywords form, and a \*\* can’t appear by itself in the arguments list.
+
+  ::
+
+    >>> def kwonly(a, **pargs, b, c):
+    SyntaxError: invalid syntax
+    >>> def kwonly(a, **, b, c):
+    SyntaxError: invalid syntax
 
 Why keyword-only arguments ?
 
@@ -228,12 +299,14 @@ Quiz: try to implement the same feature above without using keyword-only argumen
 Function design principles
 --------------------------
 
-- use arguments for inputs and return for outputs.
-- use global variables only when truly necessary.
-- don’t change mutable arguments unless the caller expects it.
-- each function should have a single, unified purpose.
-- each function should be relatively small.
-- avoid changing variables in another module file directly.
+- Coupling: use arguments for inputs and return for outputs.
+- Coupling: use global variables only when truly necessary.
+- Coupling: don’t change mutable arguments unless the caller expects it.
+- Cohesion: each function should have a single, unified purpose.
+- Size: each function should be relatively small.
+- Coupling: avoid changing variables in another module file directly.
+
+.. image:: function_execution_environment.png
 
 "First Class" Objects
 ---------------------
@@ -268,9 +341,29 @@ Function Introspection
   >>> func.__code__.co_argcount
   2
 
+Function Attributes
+-------------------
+
+::
+
+  >>> func
+  <function func at 0x000000000296A1E0>
+  >>> func.count = 0
+  >>> func.count += 1
+  >>> func.count
+  1
+  >>> func.handles = 'Button-Press'
+  >>> func.handles
+  'Button-Press'
+  >>> dir(func)
+  ['__annotations__', '__call__', '__class__', '__closure__', '__code__',
+  ...and more: in 3.X all others have double underscores so your names won't clash...
+  __str__', '__subclasshook__', 'count', 'handles']
+
+In a sense, this is also a way to emulate “static locals” in other languages—variables whose names are local to a function, but whose values are retained after a function exits. Attributes are related to objects instead of scopes, but the net effect is similar.
+
 Function Annotations in 3.x
 ---------------------------
-
 
 Annotations are completely optional, and when present are simply attached to the function object’s __annotations__ attribute for use by other tools.
 
@@ -282,21 +375,47 @@ Annotations are completely optional, and when present are simply attached to the
   >>> foo.__annotations__
   {'a': 'x', 'return': 9, 'c': <class 'list'>, 'b': 11}
 
+Finally, note that annotations work only in def statements, not lambda expressions, because lambda’s syntax already limits the utility of the functions it defines.
+
 See `PEP 3107 <http://www.python.org/dev/peps/pep-3107>`_: Function argument and return value annotations.
 
 Anonymous Functions: lambda
 ---------------------------
 
-  lambda argument1, argument2,... argumentN : expression using arguments
+lambda argument1, argument2,... argumentN : expression using arguments
 
 - lambda is an expression, not a statement.
 - lambda’s body is a single expression, not a block of statements.
 - annotations are not supported in lambda
 
+::
+
+  >>> func = lambda x=1, y=2, z=3: x + y + z
+  >>> type(func)
+  <type 'function'>
+  >>> func()
+  6
+  >>> func(1, 1, 1)
+  3
+
 Functional programming tools
 ----------------------------
 
 map, filter, functools.reduce
+
+::
+
+  In [4]: map(lambda x: x + 10, (1, 2, 3))
+  Out[4]: [11, 12, 13]
+
+  In [5]: map(lambda x, y: x + y, (1, 2, 3), (11, 22, 33))
+  Out[5]: [12, 24, 36]
+
+  In [7]: filter(lambda x: x > 0, (3, -2, -1, 2))
+  Out[7]: (3, 2)
+
+  In [9]: reduce(lambda x, y: x + y, (1, 2, 3, 4, 5))
+  Out[9]: 15
 
 Generator functions
 -------------------
